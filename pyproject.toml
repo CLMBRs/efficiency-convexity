@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "eff_conv"
+version = "0.1.0"
+authors = [
+  { name="Ashvin Ranjan", email="ar31@uw.edu"},
+  { name="Shane Steinert-Threlkeld", email="shanest@uw.edu" },
+]
+description = "Efficiency & Convexity is a toolkit for generating and analyzing encoders under the Information Bottleneck framework and calculating the quazi-convexity of probabilty distributions."
+readme = "README.md"
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+    "Operating System :: OS Independent",
+]
+license = {file = "LICENSE.txt"}
+dependencies = [
+    "scipy",
+    "numpy",
+    "pytest",
+    "black",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/CLMBRs/efficiency-convexity"
+"Bug Tracker" = "https://github.com/CLMBRs/efficiency-convexity/issues"
