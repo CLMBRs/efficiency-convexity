@@ -20,4 +20,7 @@ def shuffle_language(lang: IBLanguage, shuffle_percent: float) -> IBLanguage:
     shuffle_items = shuffle_items.T
     # Drop unused dimensions
     shuffle_items = shuffle_items[~np.all(shuffle_items <= IB_EPSILON, axis=1)]
+    # Normalize just because of floating point issues
+    shuffle_items /= np.sum(shuffle_items, axis=0)
     return IBLanguage(lang.structure, shuffle_items)
+
