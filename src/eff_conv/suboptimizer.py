@@ -23,4 +23,3 @@ def shuffle_language(lang: IBLanguage, shuffle_percent: float) -> IBLanguage:
     # Normalize just because of floating point issues
     shuffle_items /= np.sum(shuffle_items, axis=0)
     return IBLanguage(lang.structure, shuffle_items)
-
