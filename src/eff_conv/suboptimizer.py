@@ -19,7 +19,7 @@ def shuffle_language(lang: IBLanguage, shuffle_percent: float) -> IBLanguage:
     """
     if shuffle_percent < 0 or shuffle_percent > 1:
         raise ValueError("`shuffle_percent` must be between 0 and 1")
-    shuffle_items = lang.qwm.T[:]
+    shuffle_items = lang.qwm.T.copy()
     selected = random.choices(
         range(shuffle_items.shape[0]), k=ceil(shuffle_items.shape[0] * shuffle_percent)
     )[:]
