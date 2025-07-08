@@ -79,7 +79,7 @@ class TestConvexity:
                     ]
                 ),
                 np.array([1]),
-                steps=1000
+                steps=1000,
             )
             - 1 / 2
             < 0.005
