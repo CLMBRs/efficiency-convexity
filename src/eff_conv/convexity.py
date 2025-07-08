@@ -74,10 +74,6 @@ class SimilaritySpace:
                     mesh * level.shape[0] / self._1d_convexity_amount(out_points, level)
                 )
             else:
-                # If there are not enough points, continue
-                if len(level) <= level.shape[1]:
-                    qc += mesh
-                    continue
                 # See if the points don't span the space (If so, ConvexHull will throw an error)
                 consider = out_points
                 rank = np.linalg.matrix_rank(level - level[0])

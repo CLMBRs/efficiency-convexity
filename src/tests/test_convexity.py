@@ -66,6 +66,24 @@ class TestConvexity:
             - 3 / 4
             < 0.005
         )
+        assert (
+            self.sim_space_large.encoder_convexity(
+                np.array(
+                    [
+                        # fmt: off
+                        [0.5], [0], [0], [0],
+                        [0],   [0], [0], [0],
+                        [0],   [0], [0], [0],
+                        [0.5], [0], [0], [0],
+                        # fmt: on
+                    ]
+                ),
+                np.array([1]),
+                steps=1000
+            )
+            - 1 / 2
+            < 0.005
+        )
 
     def test_language_convexity(self):
         simple_struct = IBStructure(np.ones((9, 9)) / 9)

@@ -11,7 +11,6 @@ from eff_conv.utils import (
     mutual_information,
     safe_log,
 )
-from eff_conv.optimization import normals, recalculate_language
 
 
 class TestIB:
