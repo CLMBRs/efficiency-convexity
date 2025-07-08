@@ -1,6 +1,4 @@
 import numpy as np
-import random
-import sys
 
 from eff_conv.language import IBLanguage
 from eff_conv.structure import IBStructure
