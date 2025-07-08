@@ -136,14 +136,15 @@ class SimilaritySpace:
             convexities.append(self.quazi_convexity(word, steps))
         return np.sum(np.array(convexities) * weighted_sum)
 
-    def language_convexity(self, lang: IBLanguage) -> float:
+    def language_convexity(self, lang: IBLanguage, steps: int = 100) -> float:
         """Finds the quazi-convexity of an IBLanguage by evaluating the Q(m|w) matrix.
 
         Args:
             lang (IBLanguage): The language to be evaluated.
+            steps (int, default: 100): The number of steps to iterate over the probability (higher is more accurate but slower).
 
         Returns:
             float: The quazi-convexity of the language.
         """
 
-        return self.encoder_convexity(lang.qmw, lang.expressions_prior)
+        return self.encoder_convexity(lang.qmw, lang.expressions_prior, steps=steps)
