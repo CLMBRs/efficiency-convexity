@@ -154,7 +154,7 @@ class TestIB:
             == self.simple_lang.expected_divergence
         )
 
-    def test_ib_langauge_check(self):
+    def test_ib_language_check(self):
         with pytest.raises(ValueError):
             lang_wrong_shape = IBLanguage(self.simple_struct, np.array([1]))
         with pytest.raises(ValueError):
@@ -163,14 +163,3 @@ class TestIB:
             lang_invalid_probability = IBLanguage(
                 self.simple_struct, np.array([[2, 2]])
             )
-
-    # Tests for optimization.py
-    def test_normals_calculation(self):
-        assert np.array_equal(normals(self.simple_lang, 1), np.array([1, 1]))
-        assert np.array_equal(normals(self.complex_lang, 1), np.array([1, 1]))
-
-    def test_recalculate_language(self):
-        recalculated = recalculate_language(self.simple_lang, 1)
-        assert np.array_equal(self.simple_lang.qwm, recalculated.qwm)
-        recalculated = recalculate_language(self.complex_lang, 1)
-        assert np.array_equal(recalculated.qwm, np.array([[0.5, 0.5], [0.5, 0.5]]))

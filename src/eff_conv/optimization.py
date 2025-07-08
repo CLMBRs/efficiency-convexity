@@ -74,7 +74,7 @@ def calculate_optimal(
     Args:
         structure (IBStructure): The structure for which the language will be optimized
         beta (float): Beta to calculate the optimal at
-        start (IBLanguage, optional): A starting point for the optimizer. If not passed in a random langauge will be generated and used
+        start (IBLanguage, optional): A starting point for the optimizer. If not passed in a random language will be generated and used
 
     Returns:
         IBLanguage: An updated language which is closer to the optimal language.
@@ -149,7 +149,7 @@ def run_deterministic_annealing(
         structure (IBStructure): The structure for which the languages will be optimized
         betas (float): The betas to optimize for, this will be iterated through in order
         verbose (bool): Output to console when languages converge
-        start (IBLanguage, optional): A starting point for the annealing run. If not passed in a random langauge will be generated and used
+        start (IBLanguage, optional): A starting point for the annealing run. If not passed in a random language will be generated and used
 
     Returns:
         tuple[tuple[IBLanguage, float], ...]: Languages and their respective beta values.

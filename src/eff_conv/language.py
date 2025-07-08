@@ -29,7 +29,7 @@ class IBLanguage:
         expected_divergence: This is the expected KL Divergence between the language's reconstructed meanings and the structure's meanings.
         expected divergence = I(U; M) - I(W; U)
 
-        iwu: The mutual information between the expressions of a langauge and the referents. Also referred to as accuracy.
+        iwu: The mutual information between the expressions of a language and the referents. Also referred to as accuracy.
     """
 
     structure: IBStructure
