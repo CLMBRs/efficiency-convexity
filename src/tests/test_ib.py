@@ -48,7 +48,7 @@ class TestIB:
             )
         with pytest.raises(ValueError):
             struct_negative_prior = IBStructure(
-                np.array([[0.25, 0.25, 0.25, 0.25]]), np.array([.25, .25, -0.5, 1])
+                np.array([[0.25, 0.25, 0.25, 0.25]]), np.array([0.25, 0.25, -0.5, 1])
             )
         with pytest.raises(ValueError):
             struct_invalid_prior = IBStructure(
