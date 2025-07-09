@@ -37,12 +37,18 @@ class TestIB:
         with pytest.raises(ValueError):
             struct_with_zero = IBStructure(np.array([[0, 1, 0]]))
         with pytest.raises(ValueError):
+            struct_with_negative = IBStructure(np.array([[1, -1, 1]]))
+        with pytest.raises(ValueError):
             struct_wrong_prior = IBStructure(
                 np.array([[0.25, 0.25, 0.25, 0.25]]), np.array([])
             )
         with pytest.raises(ValueError):
             struct_zero_prior = IBStructure(
                 np.array([[0.25, 0.25, 0.25, 0.25]]), np.array([0, 0, 1, 0])
+            )
+        with pytest.raises(ValueError):
+            struct_negative_prior = IBStructure(
+                np.array([[0.25, 0.25, 0.25, 0.25]]), np.array([.25, .25, -0.5, 1])
             )
         with pytest.raises(ValueError):
             struct_invalid_prior = IBStructure(
@@ -161,4 +167,8 @@ class TestIB:
         with pytest.raises(ValueError):
             lang_invalid_probability = IBLanguage(
                 self.simple_struct, np.array([[2, 2]])
+            )
+        with pytest.raises(ValueError):
+            lang_negative_probability = IBLanguage(
+                self.simple_struct, np.array([[-1, 1], [2, 0]])
             )

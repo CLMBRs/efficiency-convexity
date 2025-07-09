@@ -50,6 +50,10 @@ class IBLanguage:
             raise ValueError(
                 "All columns of conditional probability matrix must sum to 1"
             )
+        if (qwm < 0).any():
+            raise ValueError(
+                "No negative numbers are allowed in the probability matrix"
+            )
         self.structure = structure
         self.qwm = qwm
 

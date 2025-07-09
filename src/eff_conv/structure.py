@@ -35,16 +35,16 @@ class IBStructure:
             raise ValueError(
                 "All columns of conditional probability matrix must sum to 1"
             )
-        if (pum == 0).any():
-            raise ValueError("Input matrix cannot have any 0s")
+        if (pum <= 0).any():
+            raise ValueError("Input matrix but all be greater than 0")
 
         if prior is not None:
             if pum.shape[1] != len(prior):
                 raise ValueError(
                     f"Input matrix is for {pum.shape[1]} meanings, but {len(prior)} priors are given"
                 )
-            if (prior == 0).any():
-                raise ValueError("Priors cannot have any 0s")
+            if (pum <= 0).any():
+                raise ValueError("Priors must all be greater than 0")
             if abs(np.sum(prior)) - 1 > IB_EPSILON:
                 raise ValueError("Priors must sum to 1")
 
