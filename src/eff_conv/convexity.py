@@ -161,8 +161,6 @@ class SimilaritySpace:
             float: The quasi-convexity of the language.
         """
 
-        print(lang.qmw.shape)
-
         return self.encoder_convexity(
             lang.reconstructed_meanings if referents else lang.qmw,
             lang.expressions_prior,

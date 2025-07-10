@@ -101,10 +101,11 @@ class TestConvexity:
             < IB_EPSILON
         )
         assert (
-            self.sim_space.language_convexity(simple_lang, referents=True)
+            self.sim_space.language_convexity(simple_lang, referents=True, steps=1000)
             - self.sim_space.encoder_convexity(
                 np.array([[0.465, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.465]]).T,
                 np.array([1]),
+                steps=1000
             )
             < IB_EPSILON
         )
