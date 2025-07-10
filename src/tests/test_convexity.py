@@ -105,7 +105,7 @@ class TestConvexity:
             - self.sim_space.encoder_convexity(
                 np.array([[0.465, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.465]]).T,
                 np.array([1]),
-                steps=1000
+                steps=1000,
             )
             < IB_EPSILON
         )
