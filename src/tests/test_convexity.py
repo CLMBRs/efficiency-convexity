@@ -102,8 +102,8 @@ class TestConvexity:
         )
         print(
             np.abs(
-                np.array([[0.465, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.465]]).T - 
-                simple_lang.reconstructed_meanings,
+                np.array([[0.465, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.465]]).T
+                - simple_lang.reconstructed_meanings,
             )
             > 1e-12
         )
