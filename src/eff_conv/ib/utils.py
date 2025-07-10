@@ -78,3 +78,18 @@ def generate_random_expressions(meanings: int, seed: int = None) -> np.ndarray:
     values = np.random.dirichlet(np.ones(meanings), size=meanings).T
     # Normalize because there is a chance the different is larger than IB_EPSILON
     return values.T / np.sum(values.T, axis=0)
+
+
+def drop_unused_dimensions(matrix: np.ndarray) -> np.ndarray:
+    """Drops rows in a matrix which are filled with 0s.
+
+    Args:
+        matrix (np.ndarray): The matrix to modify
+    Returns:
+        np.ndarray: The matrix with fully 0 rows removed.
+    """
+
+    # Drop unused dimensions
+    dropped = matrix[~np.all(matrix <= IB_EPSILON, axis=1)]
+    # Normalize
+    return dropped / np.sum(dropped, axis=0)

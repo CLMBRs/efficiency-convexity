@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from functools import cached_property
-from eff_conv.utils import IB_EPSILON, mutual_information
+from eff_conv.ib.utils import IB_EPSILON, mutual_information
 
 import numpy as np
 
@@ -10,13 +10,13 @@ class IBStructure:
     """A structure is the probability mapping from meanings to referents and the priors for meanings.
 
     Properties:
-        pum: A conditional probability matrix which maps from a meaning distribution to a referent distribution. Dimensions are ||R|| x ||M||.
+        pum: A conditional probability matrix which maps from a meaning distribution to a referent distribution. Dimensions are ||U|| x ||M||.
         This matrix cannot have any 0s in it.
 
         meanings_prior: Probability distribution for the meanings. Length must be ||M||. Cannot have any 0s in it.
         If no value is passed in then a uniform distribution will be given.
 
-        referents_prior: Probability distrubtions for the referents. Calculated via `pum` and `meanings_prior`. Length is ||R||
+        referents_prior: Probability distrubtions for the referents. Calculated via `pum` and `meanings_prior`. Length is ||U||
 
         mutual_information: Mutual information between referents and meanings. Formally I(U; M).
     """

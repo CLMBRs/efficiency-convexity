@@ -2,10 +2,11 @@ from math import log2
 import pytest
 import numpy as np
 
-from eff_conv.language import IBLanguage
-from eff_conv.structure import IBStructure
-from eff_conv.utils import (
+from eff_conv.ib.language import IBLanguage
+from eff_conv.ib.structure import IBStructure
+from eff_conv.ib.utils import (
     IB_EPSILON,
+    drop_unused_dimensions,
     generate_random_expressions,
     kl_divergence,
     mutual_information,
@@ -81,6 +82,15 @@ class TestIB:
         assert (
             abs(kl_divergence(np.array([0.5, 0.5]), np.array([0.25, 0.75])) - expected)
             < IB_EPSILON
+        )
+
+    def test_drop_unused_dimensions(self):
+        assert np.array_equal(
+            drop_unused_dimensions(np.array([[0, 0], [1, 1]])), np.array([[1, 1]])
+        )
+        assert np.array_equal(
+            drop_unused_dimensions(np.array([[0.1, 0.1], [0.9, 0.9]])),
+            np.array([[0.1, 0.1], [0.9, 0.9]]),
         )
 
     def test_mutual_information(self):

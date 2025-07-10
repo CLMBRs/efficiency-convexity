@@ -1,6 +1,10 @@
-from eff_conv.language import IBLanguage
-from eff_conv.structure import IBStructure
-from eff_conv.utils import generate_random_expressions, IB_EPSILON
+from eff_conv.ib.language import IBLanguage
+from eff_conv.ib.structure import IBStructure
+from eff_conv.ib.utils import (
+    drop_unused_dimensions,
+    generate_random_expressions,
+    IB_EPSILON,
+)
 
 import numpy as np
 import multiprocessing as mp
@@ -49,12 +53,7 @@ def recalculate_language(language: IBLanguage, beta: float) -> IBLanguage:
     )
 
     # Drop unused dimensions
-    recalculated_qwm = recalculated_qwm[~np.all(recalculated_qwm <= IB_EPSILON, axis=1)]
-
-    # Normalize (This is not in the paper but embo does it)
-    # This should not be needed but its a nice sanity check, probably should throw a warning if
-    # recalculated_qwm's columns do not sum to 1
-    recalculated_qwm /= np.sum(recalculated_qwm, axis=0)
+    recalculated_qwm = drop_unused_dimensions(recalculated_qwm)
 
     # Create new language
     return IBLanguage(

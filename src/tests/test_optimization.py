@@ -1,8 +1,8 @@
 import numpy as np
 
-from eff_conv.language import IBLanguage
-from eff_conv.structure import IBStructure
-from eff_conv.optimization import normals, recalculate_language
+from eff_conv.ib.language import IBLanguage
+from eff_conv.ib.structure import IBStructure
+from eff_conv.ib.optimization import normals, recalculate_language
 
 
 class TestOptimization:

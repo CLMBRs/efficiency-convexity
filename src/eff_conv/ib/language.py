@@ -1,6 +1,6 @@
 from functools import cached_property
-from eff_conv.structure import IBStructure
-from eff_conv.utils import IB_EPSILON, mutual_information, kl_divergence
+from eff_conv.ib.structure import IBStructure
+from eff_conv.ib.utils import IB_EPSILON, kl_divergence, mutual_information
 
 import numpy as np
 
@@ -11,17 +11,18 @@ class IBLanguage:
     Properties:
         structure: This is the structure in which the language exists.
 
-        qwm: This is a conditional probaiblity matrix which maps a meaning distribution to expressions. Dimensions are ||W|| x ||M||
+        qwm: This is a conditional probaiblity matrix which maps a meaning distribution to expressions. Dimensions are ||W|| x ||M||.
+        Note: The columns of the matrix are the probability distributions. This differs from other implementations.
 
         qmw: Reconstructed conditional probability matrix which maps an expression distrubution to meanings. Created using Bayes' rule.
         Dimensions are ||M|| x ||W||.
 
         complexity: Mutual information between expressions and meanings. Formally I(W; M).
 
-        expressions_prior: Probability distribution for expressions. Constructed from the structure's meaning priors and qwm.
+        expressions_prior: Probability distribution for expressions. Constructed from the structure's meaning priors and qwm. Formally p(w).
 
         reconstructed_meanings: Conditional probability matrix which maps an expression distrubition to referents. Created using qmw and structure.pum.
-        Dimensions are ||R|| x ||W||.
+        Dimensions are ||U|| x ||W||.
 
         divergence_array: Matrix which stores the different KL Divergences between the referent probability distrubutions per meaning and per expression.
         Dimensions are ||W|| x ||M||. (It is important to note that the KL Divergence function uses base 2 logarithms)
@@ -29,7 +30,7 @@ class IBLanguage:
         expected_divergence: This is the expected KL Divergence between the language's reconstructed meanings and the structure's meanings.
         expected divergence = I(U; M) - I(W; U)
 
-        iwu: The mutual information between the expressions of a language and the referents. Also referred to as accuracy.
+        iwu: The mutual information between the expressions of a language and the referents. Also referred to as accuracy. Formally I(W; U)
     """
 
     structure: IBStructure

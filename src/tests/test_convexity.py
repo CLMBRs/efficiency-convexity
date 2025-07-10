@@ -1,9 +1,9 @@
 import numpy as np
 
 from eff_conv.convexity import SimilaritySpace
-from eff_conv.language import IBLanguage
-from eff_conv.structure import IBStructure
-from eff_conv.utils import IB_EPSILON
+from eff_conv.ib.language import IBLanguage
+from eff_conv.ib.structure import IBStructure
+from eff_conv.ib.utils import IB_EPSILON
 
 
 class TestConvexity:
@@ -86,10 +86,25 @@ class TestConvexity:
         )
 
     def test_language_convexity(self):
-        simple_struct = IBStructure(np.ones((9, 9)) / 9)
+        simple_struct = IBStructure(
+            np.array(
+                [
+                    [0.465, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.465]
+                    for _ in range(9)
+                ]
+            ).T
+        )
         simple_lang = IBLanguage(simple_struct, np.ones((1, 9)))
         assert (
             self.sim_space.language_convexity(simple_lang)
             - self.sim_space.encoder_convexity(np.ones((9, 1)) / 9, np.array([1]))
+            < IB_EPSILON
+        )
+        assert (
+            self.sim_space.language_convexity(simple_lang, referents=True)
+            - self.sim_space.encoder_convexity(
+                np.array([[0.465, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.465]]).T,
+                np.array([1]),
+            )
             < IB_EPSILON
         )

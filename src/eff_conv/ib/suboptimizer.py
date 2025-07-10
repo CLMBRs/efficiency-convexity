@@ -1,10 +1,8 @@
-from eff_conv.language import IBLanguage
-from eff_conv.utils import IB_EPSILON
+from eff_conv.ib.language import IBLanguage
+from eff_conv.ib.utils import drop_unused_dimensions
 
-from math import ceil
-
+import math
 import random
-import numpy as np
 
 
 def shuffle_language(lang: IBLanguage, shuffle_percent: float) -> IBLanguage:
@@ -21,7 +19,8 @@ def shuffle_language(lang: IBLanguage, shuffle_percent: float) -> IBLanguage:
         raise ValueError("`shuffle_percent` must be between 0 and 1")
     shuffle_items = lang.qwm.T.copy()
     selected = random.choices(
-        range(shuffle_items.shape[0]), k=ceil(shuffle_items.shape[0] * shuffle_percent)
+        range(shuffle_items.shape[0]),
+        k=math.ceil(shuffle_items.shape[0] * shuffle_percent),
     )[:]
     unshuffled = selected[:]
     random.shuffle(selected)
@@ -29,8 +28,8 @@ def shuffle_language(lang: IBLanguage, shuffle_percent: float) -> IBLanguage:
         shuffle_items[u] = lang.qwm.T[s]
 
     shuffle_items = shuffle_items.T
+
     # Drop unused dimensions
-    shuffle_items = shuffle_items[~np.all(shuffle_items <= IB_EPSILON, axis=1)]
-    # Normalize just because of floating point issues
-    shuffle_items /= np.sum(shuffle_items, axis=0)
+    shuffle_items = drop_unused_dimensions(shuffle_items)
+
     return IBLanguage(lang.structure, shuffle_items)
