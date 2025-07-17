@@ -39,11 +39,47 @@ class TestConvexity:
         )
         # Epsilon is higher because rounding errors are more common beacuse of the nature of the algorithm
         assert (
-            self.sim_space.encoder_convexity(
-                np.array([[0.2], [0], [0.2], [0], [0.2], [0], [0.2], [0], [0.2]]),
-                np.array([1]),
+            self.sim_space.skinner_encoder_convexity(
+                np.array(
+                    [
+                        # fmt: off
+                    [0.2, 0], 
+                    [0,   1],
+                    [0.2, 0], 
+                    [0,   0], 
+                    [0.2, 0], 
+                    [0,   0], 
+                    [0.2, 0], 
+                    [0,   0], 
+                    [0.2, 0],
+                        # fmt: on
+                    ]
+                ),
+                np.array([0.5, 0.5]),
             )
-            - 5 / 9
+            - 19 / 27
+            < 0.005
+        )
+        assert (
+            self.sim_space.encoder_convexity(
+                np.array(
+                    [
+                        # fmt: off
+                    [0.2, 0], 
+                    [0,   1],
+                    [0.2, 0], 
+                    [0,   0], 
+                    [0.2, 0], 
+                    [0,   0], 
+                    [0.2, 0], 
+                    [0,   0], 
+                    [0.2, 0],
+                        # fmt: on
+                    ]
+                ),
+                np.array([0.5, 0.5]),
+            )
+            - 14 / 18
             < 0.005
         )
 

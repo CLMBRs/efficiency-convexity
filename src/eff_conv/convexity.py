@@ -116,10 +116,10 @@ class SimilaritySpace:
                 qc += mesh * level.shape[0] / amount
         return qc
 
-    def encoder_convexity(
+    def skinner_encoder_convexity(
         self, distrubitions: np.ndarray, prior: np.ndarray, steps: int = 100
     ) -> float:
-        """Finds the quasi-convexity of a conditional probabilty matrix, typically an IB encoder. Algorithm from Skinner L. (2025).
+        """Finds the quasi-convexity of a conditional probabilty matrix, typically an IB encoder. Weighting algorithm from Skinner L. (2025).
 
         Args:
             distrubitions (np.ndarray): The conditional probaility matrix to be evaluated. Shape is of ||P|| x n where n > 0.
@@ -146,6 +146,27 @@ class SimilaritySpace:
         for word in distrubitions.T:
             convexities.append(self.quasi_convexity(word, steps))
         return np.sum(np.array(convexities) * weighted_sum)
+
+    def encoder_convexity(
+        self, distrubitions: np.ndarray, prior: np.ndarray, steps: int = 100
+    ) -> float:
+        """Finds the quasi-convexity of a conditional probabilty matrix, typically an IB encoder. Weighting is based on the p(y) for p(x|y).
+
+        Args:
+            distrubitions (np.ndarray): The conditional probaility matrix to be evaluated. Shape is of ||P|| x n where n > 0.
+            Each column of the matrix should be a probability distrubtion over P.
+
+            prior (np.ndarray): The probability distribution of inputs into the encoder. Must be of size n.
+            steps (int, default: 100): The number of steps to interate over the probability (higher is more accurate but slower)
+
+        Returns:
+            float: The quasi-convexity of the matrix.
+        """
+
+        convexities = []
+        for word in distrubitions.T:
+            convexities.append(self.quasi_convexity(word, steps))
+        return np.sum(np.array(convexities) * prior)
 
     def language_convexity(
         self, lang: IBLanguage, steps: int = 100, referents=False
