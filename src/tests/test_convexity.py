@@ -42,7 +42,7 @@ class TestConvexity:
             self.sim_space.skinner_encoder_convexity(
                 np.array(
                     [
-                        # fmt: off
+                    # fmt: off
                     [0.2, 0], 
                     [0,   1],
                     [0.2, 0], 
@@ -52,7 +52,7 @@ class TestConvexity:
                     [0.2, 0], 
                     [0,   0], 
                     [0.2, 0],
-                        # fmt: on
+                    # fmt: on
                     ]
                 ),
                 np.array([0.5, 0.5]),
@@ -64,7 +64,7 @@ class TestConvexity:
             self.sim_space.encoder_convexity(
                 np.array(
                     [
-                        # fmt: off
+                    # fmt: off
                     [0.2, 0], 
                     [0,   1],
                     [0.2, 0], 
@@ -74,7 +74,7 @@ class TestConvexity:
                     [0.2, 0], 
                     [0,   0], 
                     [0.2, 0],
-                        # fmt: on
+                    # fmt: on
                     ]
                 ),
                 np.array([0.5, 0.5]),
