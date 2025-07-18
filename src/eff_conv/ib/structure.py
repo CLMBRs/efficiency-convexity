@@ -59,7 +59,6 @@ class IBStructure:
             ),
         )
         object.__setattr__(self, "pum", pum)
-        print()
 
     @cached_property
     def referents_prior(self) -> np.ndarray:
