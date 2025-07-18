@@ -45,7 +45,7 @@ class IBStructure:
                 )
             if (pum <= 0).any():
                 raise ValueError("Priors must all be greater than 0")
-            if abs(np.sum(prior)) - 1 > IB_EPSILON:
+            if abs(np.sum(prior) - 1) > IB_EPSILON:
                 raise ValueError("Priors must sum to 1")
 
         # If priors are not passed in, make it uniform
@@ -59,6 +59,7 @@ class IBStructure:
             ),
         )
         object.__setattr__(self, "pum", pum)
+        print()
 
     @cached_property
     def referents_prior(self) -> np.ndarray:

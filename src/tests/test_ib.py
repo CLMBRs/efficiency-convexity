@@ -55,6 +55,10 @@ class TestIB:
             struct_invalid_prior = IBStructure(
                 np.array([[0.25, 0.25, 0.25, 0.25]]), np.array([1, 2, 3, 4])
             )
+        with pytest.raises(ValueError):
+            struct_small_prior = IBStructure(
+                np.array([[0.25, 0.25, 0.25, 0.25]]), np.array([0.1, 0.1, 0.1, 0.1])
+            )
 
     # Tests for utils.py
     def test_safe_log(self):
