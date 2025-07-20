@@ -51,6 +51,10 @@ class IBLanguage:
             raise ValueError(
                 "All columns of conditional probability matrix must sum to 1"
             )
+        if (np.sum(qwm, axis=1) <= 0).any():
+            raise ValueError(
+                "All rows of conditional probability matrix must sum to a value greater than 0"
+            )
         if (qwm < 0).any():
             raise ValueError(
                 "No negative numbers are allowed in the probability matrix"

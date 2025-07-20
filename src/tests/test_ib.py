@@ -186,3 +186,5 @@ class TestIB:
             lang_negative_probability = IBLanguage(
                 self.simple_struct, np.array([[-1, 1], [2, 0]])
             )
+        with pytest.raises(ValueError):
+            lang_zero_row = IBLanguage(self.simple_struct, np.array([[1, 1], [0, 0]]))
