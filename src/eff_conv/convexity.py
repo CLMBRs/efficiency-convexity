@@ -4,6 +4,8 @@ from scipy.spatial import ConvexHull
 
 import numpy as np
 
+from eff_conv.ib.utils import IB_EPSILON
+
 
 class SimilaritySpace:
     """A similarity space contains points (which should correspond in order to referents or meanings) and the priors upon those points.
@@ -29,6 +31,10 @@ class SimilaritySpace:
                 or point_prior.shape[0] != sim_space.shape[0]
             ):
                 raise ValueError("Point priors not of correct size")
+            if np.abs(np.sum(point_prior) - 1) > IB_EPSILON:
+                raise ValueError("Point priors must sum to 1")
+            if (point_prior <= 0).any():
+                raise ValueError("Prior values must be greater than 0")
             self.point_prior = point_prior
         else:
             self.point_prior = np.array(
@@ -65,6 +71,10 @@ class SimilaritySpace:
             raise ValueError("Quasi-Convexity input must be a probability distribution")
         if np.size(point_dist) != self.sim_space.shape[0]:
             raise ValueError("Quasi-Convexity input must map to all points")
+        if np.abs(np.sum(point_dist) - 1) > IB_EPSILON:
+            raise ValueError("Quasi-Convexity input must sum to 1")
+        if (point_dist < 0).any():
+            raise ValueError("Quasi-Convexity input must be greater than or equal to 0")
         if steps <= 0:
             raise ValueError("Steps must be positive")
 
@@ -132,6 +142,11 @@ class SimilaritySpace:
             float: The quasi-convexity of the matrix.
         """
 
+        if np.abs(np.sum(prior) - 1) > IB_EPSILON:
+            raise ValueError("Prior must sum to 1")
+        if (prior <= 0).any():
+            raise ValueError("Prior must be greater than 0")
+
         # Apply Bayes' rule
         reconstructed = distrubitions.T * prior[:, None] / self.point_prior
         maximums = np.max(reconstructed, axis=0)
@@ -162,6 +177,11 @@ class SimilaritySpace:
         Returns:
             float: The quasi-convexity of the matrix.
         """
+
+        if np.abs(np.sum(prior) - 1) > IB_EPSILON:
+            raise ValueError("Prior must sum to 1")
+        if (prior <= 0).any():
+            raise ValueError("Prior must be greater than 0")
 
         convexities = []
         for word in distrubitions.T:
