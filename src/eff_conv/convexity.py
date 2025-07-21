@@ -4,6 +4,8 @@ from scipy.spatial import ConvexHull
 
 import numpy as np
 
+from eff_conv.ib.utils import IB_EPSILON
+
 
 class SimilaritySpace:
     """A similarity space contains points (which should correspond in order to referents or meanings) and the priors upon those points.
@@ -29,6 +31,10 @@ class SimilaritySpace:
                 or point_prior.shape[0] != sim_space.shape[0]
             ):
                 raise ValueError("Point priors not of correct size")
+            if np.abs(np.sum(point_prior) - 1) > IB_EPSILON:
+                raise ValueError("Point priors must sum to 1")
+            if (point_prior <= 0).any():
+                raise ValueError("Prior values must be greater than 0")
             self.point_prior = point_prior
         else:
             self.point_prior = np.array(
@@ -65,6 +71,10 @@ class SimilaritySpace:
             raise ValueError("Quasi-Convexity input must be a probability distribution")
         if np.size(point_dist) != self.sim_space.shape[0]:
             raise ValueError("Quasi-Convexity input must map to all points")
+        if np.abs(np.sum(point_dist) - 1) > IB_EPSILON:
+            raise ValueError("Quasi-Convexity input must sum to 1")
+        if (point_dist < 0).any():
+            raise ValueError("Quasi-Convexity input must be greater than or equal to 0")
         if steps <= 0:
             raise ValueError("Steps must be positive")
 
@@ -116,10 +126,10 @@ class SimilaritySpace:
                 qc += mesh * level.shape[0] / amount
         return qc
 
-    def encoder_convexity(
+    def skinner_encoder_convexity(
         self, distrubitions: np.ndarray, prior: np.ndarray, steps: int = 100
     ) -> float:
-        """Finds the quasi-convexity of a conditional probabilty matrix, typically an IB encoder. Algorithm from Skinner L. (2025).
+        """Finds the quasi-convexity of a conditional probabilty matrix, typically an IB encoder. Weighting algorithm from Skinner L. (2025).
 
         Args:
             distrubitions (np.ndarray): The conditional probaility matrix to be evaluated. Shape is of ||P|| x n where n > 0.
@@ -131,6 +141,11 @@ class SimilaritySpace:
         Returns:
             float: The quasi-convexity of the matrix.
         """
+
+        if np.abs(np.sum(prior) - 1) > IB_EPSILON:
+            raise ValueError("Prior must sum to 1")
+        if (prior <= 0).any():
+            raise ValueError("Prior must be greater than 0")
 
         # Apply Bayes' rule
         reconstructed = distrubitions.T * prior[:, None] / self.point_prior
@@ -146,6 +161,32 @@ class SimilaritySpace:
         for word in distrubitions.T:
             convexities.append(self.quasi_convexity(word, steps))
         return np.sum(np.array(convexities) * weighted_sum)
+
+    def encoder_convexity(
+        self, distrubitions: np.ndarray, prior: np.ndarray, steps: int = 100
+    ) -> float:
+        """Finds the quasi-convexity of a conditional probabilty matrix, typically an IB encoder. Weighting is based on the p(y) for p(x|y).
+
+        Args:
+            distrubitions (np.ndarray): The conditional probaility matrix to be evaluated. Shape is of ||P|| x n where n > 0.
+            Each column of the matrix should be a probability distrubtion over P.
+
+            prior (np.ndarray): The probability distribution of inputs into the encoder. Must be of size n.
+            steps (int, default: 100): The number of steps to interate over the probability (higher is more accurate but slower)
+
+        Returns:
+            float: The quasi-convexity of the matrix.
+        """
+
+        if np.abs(np.sum(prior) - 1) > IB_EPSILON:
+            raise ValueError("Prior must sum to 1")
+        if (prior <= 0).any():
+            raise ValueError("Prior must be greater than 0")
+
+        convexities = []
+        for word in distrubitions.T:
+            convexities.append(self.quasi_convexity(word, steps))
+        return np.sum(np.array(convexities) * prior)
 
     def language_convexity(
         self, lang: IBLanguage, steps: int = 100, referents=False
