@@ -17,7 +17,7 @@ def test_nl_optimality_convexity():
             "optimal": [],
             "suboptimal": [],
             "natural": [],
-        }
+        },
     }
 
     for _, row in model.iterrows():

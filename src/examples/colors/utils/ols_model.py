@@ -8,6 +8,7 @@ import sys
 def find_frontier_optimality(frontier, point):
     return -np.min(np.linalg.norm(frontier - point, axis=1))
 
+
 def ols_from_model(model):
 
     frontier = []
@@ -27,11 +28,9 @@ def ols_from_model(model):
 
     model["optimality"] = optimality
 
-    model = model.rename(columns={
-        'convexity-qmw': 'convexity_qmw',
-        'convexity-quw': 'convexity_quw'
-    })
-
+    model = model.rename(
+        columns={"convexity-qmw": "convexity_qmw", "convexity-quw": "convexity_quw"}
+    )
 
     results = smf.ols(
         "convexity_qmw ~ optimality + complexity * accuracy", data=model

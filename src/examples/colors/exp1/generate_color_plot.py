@@ -4,6 +4,7 @@ import pandas as pd
 
 plt.rcParams["text.usetex"] = True
 
+
 def gen_graph():
     plt.figure()
 
@@ -66,7 +67,6 @@ def fill_graph(
 ):
     ax.set_box_aspect(1)
 
-
     convexity = model[f"convexity-q{'u' if quw else 'm'}w"].tolist()
 
     scatter = ax.scatter(
@@ -98,6 +98,6 @@ def fill_graph(
         cbar.set_label("Quasi-Convexity", rotation=270, labelpad=30, fontsize=20)
     return scatter
 
+
 if __name__ == "__main__":
     gen_graph()
-    

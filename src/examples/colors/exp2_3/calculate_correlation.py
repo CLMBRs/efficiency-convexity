@@ -69,9 +69,7 @@ def create_table(names, titles, file_name, qmw=True):
     }
 
     for name in names:
-        opt_coeff, comp_coeff, iwu_coeff = calculate_correlations(
-            name, qmw=qmw
-        )
+        opt_coeff, comp_coeff, iwu_coeff = calculate_correlations(name, qmw=qmw)
         coeffs["opt"].append(opt_coeff[0])
         coeffs["p opt"].append(opt_coeff[1])
         coeffs["I(M; W)"].append(comp_coeff[0])
