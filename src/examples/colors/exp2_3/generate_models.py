@@ -21,7 +21,18 @@ from .models.variants import (
 from .models.special import ManhattanDistance
 
 
-def generate_model(system: ModelSystem, referent_space: np.ndarray, add_convexity=True):
+def generate_model(
+    system: ModelSystem, referent_space: np.ndarray, add_convexity: bool = True
+):
+    """
+    Calculates the optimal encoders, generates suboptimal encoders, and calculates quasi-convexity values
+    for the model system and referent space
+
+    Args:
+        system (ModelSystem): The system to generate the model file for
+        referent_space (np.ndarray): A list of points for the **referents** of the system, used for the quasi-convexity of q(u|w)
+        add_convexity (bool): Whether or not to add the quasi-convexity of the encoders to the model files
+    """
     with open("./colors/data/model.pkl", "rb") as f:
         betas = pickle.load(f)["betas"][::-1]
 
@@ -89,21 +100,43 @@ def generate_model(system: ModelSystem, referent_space: np.ndarray, add_convexit
         pickle.dump(model, f)
 
 
-SD = 1.5
+STANDARD_DEVIATION = 1.5
 
 
-def reg_dist(i):
+def reg_dist(i: int) -> np.ndarray:
+    """
+    Gives the normalized distribution for a gaussian distribution centered at point i ranging from 0 to 10 (inclusive)
+    Standard deviation is 1.5
+
+    Args:
+        i (int): Where the distribution is centered at
+
+    Returns:
+        np.ndarray: The probability distribution
+    """
     meaning = np.array(list(range(0, 11)))
-    meaning = np.exp(-0.5 * ((meaning - i) / SD) ** 2) / (SD * sqrt(4 * pi))
+    meaning = np.exp(-0.5 * ((meaning - i) / STANDARD_DEVIATION) ** 2) / (
+        STANDARD_DEVIATION * sqrt(4 * pi)
+    )
     return meaning / np.sum(meaning)
 
 
-def dual_dist(i):
+def dual_dist(i: int) -> np.ndarray:
+    """
+    Gives the normalized distribution for a gaussian distribution centered at point i and -i ranging from -10 to 10 (inclusive)
+    Standard deviation is 1.5
+
+    Args:
+        i (int): Where the distribution is centered at (and also it being centered at -i)
+
+    Returns:
+        np.ndarray: The probability distribution
+    """
     meaning = np.array(list(range(-10, 11)))
     meaning = (
-        np.exp(-0.5 * ((meaning - i) / SD) ** 2)
-        + np.exp(-0.5 * ((meaning + i) / SD) ** 2)
-    ) / (SD * sqrt(8 * pi))
+        np.exp(-0.5 * ((meaning - i) / STANDARD_DEVIATION) ** 2)
+        + np.exp(-0.5 * ((meaning + i) / STANDARD_DEVIATION) ** 2)
+    ) / (STANDARD_DEVIATION * sqrt(8 * pi))
     return meaning / np.sum(meaning)
 
 

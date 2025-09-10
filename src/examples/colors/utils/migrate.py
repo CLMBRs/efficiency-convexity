@@ -2,7 +2,13 @@ import pickle
 import sys
 
 
-def migrate_file(name):
+def migrate_file(name: str):
+    """
+    Migrates a given old model file from Experiments 2 & 3 to a more organized format. This should not longer need to be used.
+
+    Args:
+        name (str): The name (without the `model-` prefix or the `.pkl` suffix) of the model file
+    """
     with open(f"./colors/data/convexity/model-{name}.pkl", "rb") as f:
         model = pickle.load(f)
 

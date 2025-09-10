@@ -1,33 +1,16 @@
 import statsmodels.formula.api as smf
 import pandas as pd
-import numpy as np
-import pickle
 import sys
 
 
-def find_frontier_optimality(frontier, point):
-    return -np.min(np.linalg.norm(frontier - point, axis=1))
+def ols_from_model(model: pd.DataFrame):
+    """
+    Prints the output for the OLS model describing `convexity_qmw ~ optimality + complexity * accuracy` and `convexity_quw ~ optimality + complexity * accuracy`
+    for a given input DataFrame
 
-
-def ols_from_model(model):
-
-    frontier = []
-    all_points = []
-
-    for _, row in model.iterrows():
-        if row["type"] == "optimal":
-            frontier.append([row["complexity"], row["accuracy"]])
-        all_points.append([row["complexity"], row["accuracy"]])
-
-    frontier = np.array(frontier)
-    all_points = np.array(all_points)
-    optimality = []
-
-    for p in all_points:
-        optimality.append(find_frontier_optimality(frontier, p))
-
-    model["optimality"] = optimality
-
+    Args:
+        model (DataFrame): The input DataFrame, the format should be one that is loaded from one of the `.csv` model files
+    """
     model = model.rename(
         columns={"convexity-qmw": "convexity_qmw", "convexity-quw": "convexity_quw"}
     )

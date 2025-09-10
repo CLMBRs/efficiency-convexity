@@ -5,11 +5,7 @@ Based on the paper [TODO]
 ## Setup
 After setting up the `eff_conv` environment, install the proper prerequisites:
 ```sh
-python -m pip install pandas==2.3.0
-python -m pip install open3d==0.19.0
-python -m pip install matplotlib==3.10.3
-python -m pip install scikit-image==0.25.2
-python -m pip install statsmodels==0.14.4
+python -m pip install -r requirements.txt
 ```
 
 ## How To Run
@@ -119,7 +115,7 @@ TODO: ADD OTHER CORRELATION MODEL AND OTHER ANALYSIS
   - Takes in an argument, that being the name of a minimized `.csv` file without the extension. Creates an OLS model for the given model.
 - `visualization.cloud`
   - Takes in 1 - 3 arguemnts, the first being the name of the output file and the second (optional) being a rotation value, the final can argument is `diff` and toggles whether or not to show difference point cloud or the regular point cloud.
-- `utils.gen_wcs_grid`
+- `visualization.gen_wcs_grid`
   - Generates a very simplistic WCS stimulus grid. To change the rotation a constant must be manually edited in the file.
 
 ## Notes

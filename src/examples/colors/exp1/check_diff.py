@@ -3,11 +3,51 @@ import pandas as pd
 import numpy as np
 
 
-def get_closest(points, point, amount):
+def get_closest(points: np.ndarray, point: np.ndarray, amount: int) -> np.ndarray:
+    """
+    Gets the indecies n closest points to the input points in the input points array. Not necessarily in closest to farthest order.
+
+    Args:
+        points (np.ndarray): A list of 2-dimensional points. These are the points which the input point is checked against.
+        point (np.ndarray): A 2-dimensional point. This is the point which is being checked.
+        amount (int): The number of points to return
+
+    Returns:
+        np.ndarray: the n closest points to the input point, not necessarily in closest to farthest order.
+    """
     return np.argpartition(np.linalg.norm(points - point, axis=1), amount)[:amount]
 
 
-def convert_model(model):
+def convert_model(
+    model: pd.DataFrame,
+) -> tuple[
+    np.ndarray,
+    np.ndarray,
+    np.ndarray,
+    np.ndarray,
+    np.ndarray,
+    np.ndarray,
+    np.ndarray,
+    np.ndarray,
+]:
+    """
+    Converts an input model taken from the color model `.csv` file and returns helpful arrays which are used in calculations
+
+    Args:
+        model (DataFrame): The DataFrame which can be directly loaded from the color model's minimized `.csv` file
+
+    Returns:
+        tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+            The following arrays, in order:
+        - The points from optimal encoders
+        - The points from suboptimal encoders
+        - The points from natural language encoders
+        - The concatination of all points (in order: optimal, suboptimal, natural)
+        - The concatination of suboptimal and natural language encoder points
+        - The concatination of optimal and suboptimal encoder points
+        - The quasi-convexity of the q(m|w) distributions for all encoders in points
+        - The quasi-convexity of the q(u|w) distributions for all encoders in points
+    """
     frontier = []
     suboptimal = []
     natural = []
@@ -42,7 +82,14 @@ def convert_model(model):
     )
 
 
-def get_neighbor_comparison(amount, model):
+def get_neighbor_comparison(amount: int, model: pd.DataFrame):
+    """
+    Takes in a number of neighbors to compare to and the color model from the `.csv` file and displays information about neighboring encoders
+
+    Args:
+        amount (int): The number of neighbors to compare to.
+        model (DataFrame): The DataFrame which can be directly loaded from the color model's minimized `.csv` file.
+    """
     _, _, _, points, check_frontier, check_natural, convexities_qmw, convexities_quw = (
         convert_model(model)
     )
@@ -91,7 +138,15 @@ def get_neighbor_comparison(amount, model):
     )
 
 
-def check_difference_significance(amount, model):
+def check_difference_significance(amount: int, model: pd.DataFrame):
+    """
+    Takes in a number of neighbors to compare to and the color model from the `.csv` file and finds correlation between
+    the quasi-convexity of a natural language's q(m|w) and q(u|w) distributions and that of their `amount` closest neighbors
+
+    Args:
+        amount (int): The number of neighbors to compare to.
+        model (DataFrame): The DataFrame which can be directly loaded from the color model's minimized `.csv` file.
+    """
     _, _, natural, _, _, check_natural, convexities_qmw, convexities_quw = (
         convert_model(model)
     )

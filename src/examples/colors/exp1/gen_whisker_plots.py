@@ -1,10 +1,12 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 
-plt.rcParams["text.usetex"] = True
 
-
-def test_nl_optimality_convexity():
+def generate_whisker_plot():
+    """
+    Generates a whisker plot showing the convexities for optimal, suboptimal, and natural language encoders from the color
+    naming data.
+    """
     model = pd.read_csv("./colors/data/minimized/color_model.csv", header=0)
 
     convexities = {
@@ -65,4 +67,7 @@ def test_nl_optimality_convexity():
     plt.savefig(f"./colors/output/convexity/whisker.png")
 
 
-test_nl_optimality_convexity()
+if __name__ == "__main__":
+    plt.rcParams["text.usetex"] = True
+
+    generate_whisker_plot()
