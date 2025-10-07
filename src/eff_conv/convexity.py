@@ -1,9 +1,7 @@
-from eff_conv.ib.language import IBLanguage
-
+import numpy as np
 from scipy.spatial import ConvexHull
 
-import numpy as np
-
+from eff_conv.ib.language import IBLanguage
 from eff_conv.ib.utils import IB_EPSILON
 
 

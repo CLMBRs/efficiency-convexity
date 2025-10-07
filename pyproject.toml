@@ -11,7 +11,7 @@ authors = [
 ]
 description = "Efficiency & Convexity is a toolkit for generating and analyzing encoders under the Information Bottleneck framework and calculating the quazi-convexity of probabilty distributions."
 readme = "README.md"
-requires-python = ">=3.7"
+requires-python = ">=3.9"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
@@ -23,8 +23,15 @@ dependencies = [
     "numpy",
     "pytest",
     "black",
+    "statsmodels>=0.13.5",
 ]
 
 [project.urls]
 "Homepage" = "https://github.com/CLMBRs/efficiency-convexity"
 "Bug Tracker" = "https://github.com/CLMBRs/efficiency-convexity/issues"
+
+[dependency-groups]
+dev = [
+    "ruff>=0.14.0",
+    "ty>=0.0.1a21",
+]
