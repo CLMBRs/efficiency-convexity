@@ -45,6 +45,7 @@ def minimize_model(name: str):
         "type": [],
         "beta": [],
         "optimality": [],
+        "base_item_id": []
     }
 
     frontier = []
@@ -61,23 +62,13 @@ def minimize_model(name: str):
         df_data["convexity-quw"].append(model["convexity"]["quw"]["optimal"][i])
         df_data["type"].append("optimal")
         df_data["optimality"].append(0)
+        df_data["base_item_id"].append(i)
         frontier.append([lang.complexity, lang.iwu])
 
     frontier = np.array(frontier)
 
-    for i, s in enumerate(model["suboptimal"]):
-        if artificial:
-            df_data["beta"].append(-1)
-        df_data["accuracy"].append(s.iwu)
-        df_data["complexity"].append(s.complexity)
-        df_data["convexity-qmw"].append(model["convexity"]["qmw"]["suboptimal"][i])
-        df_data["convexity-quw"].append(model["convexity"]["quw"]["suboptimal"][i])
-        df_data["type"].append("suboptimal")
-        df_data["optimality"].append(
-            find_frontier_optimality(frontier, np.array([s.complexity, s.iwu]))
-        )
-
     if not artificial:
+        offset = len(model["optimal"])
         for i, n in enumerate(model["natural"]):
             df_data["accuracy"].append(n.iwu)
             df_data["complexity"].append(n.complexity)
@@ -87,6 +78,7 @@ def minimize_model(name: str):
             df_data["optimality"].append(
                 find_frontier_optimality(frontier, np.array([n.complexity, n.iwu]))
             )
+            df_data["base_item_id"].append(i + offset)
 
         with open(f"./colors/data/model.pkl", "rb") as f:
             optimal_model = pickle.load(f)
@@ -94,7 +86,20 @@ def minimize_model(name: str):
         for i in range(len(df_data["beta"]), len(df_data["accuracy"])):
             df_data["beta"].append(-1)
 
+    for i, s in enumerate(model["suboptimal"]):
+        df_data["beta"].append(-1)
+        df_data["accuracy"].append(s.iwu)
+        df_data["complexity"].append(s.complexity)
+        df_data["convexity-qmw"].append(model["convexity"]["qmw"]["suboptimal"][i])
+        df_data["convexity-quw"].append(model["convexity"]["quw"]["suboptimal"][i])
+        df_data["type"].append("suboptimal")
+        df_data["optimality"].append(
+            find_frontier_optimality(frontier, np.array([s.complexity, s.iwu]))
+        )
+        df_data["base_item_id"].append(i//10)
+
     df = pd.DataFrame(data=df_data)
+    df.index.name = "item_id"
     df.to_csv(f"./colors/data/minimized/{name}.csv")
 
 
