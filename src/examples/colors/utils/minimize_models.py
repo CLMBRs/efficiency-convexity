@@ -45,7 +45,7 @@ def minimize_model(name: str):
         "type": [],
         "beta": [],
         "optimality": [],
-        "base_item_id": []
+        "base_item_id": [],
     }
 
     frontier = []
@@ -96,7 +96,7 @@ def minimize_model(name: str):
         df_data["optimality"].append(
             find_frontier_optimality(frontier, np.array([s.complexity, s.iwu]))
         )
-        df_data["base_item_id"].append(i//10)
+        df_data["base_item_id"].append(i // 10)
 
     df = pd.DataFrame(data=df_data)
     df.index.name = "item_id"
