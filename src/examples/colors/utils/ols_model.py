@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 from scipy import stats
 from statsmodels.regression.linear_model import RegressionResults
 from statsmodels.regression.mixed_linear_model import MixedLMResults
+from statsmodels.stats.anova import anova_lm
 
 
 def ols_from_model(
@@ -106,6 +107,7 @@ if __name__ == "__main__":
     )
 
     # first analysis: mixed vs. fixed effects for type + base_type
+    # TODO: refactor this into its own method?
 
     mixed_model_results = mixed_lm_from_model(
         model,
@@ -136,15 +138,63 @@ if __name__ == "__main__":
         "convexity_qmw ~ type + base_type +  optimality + complexity + accuracy",
         data=model,
     )
-    print(big_model.fit().summary())
-
-    big_model = smf.ols(
-        "convexity_qmw ~ type + base_type +  optimality * complexity * accuracy",
-        data=model,
-    )
     big_model_result = big_model.fit()
     print(big_model_result.summary())
 
+    interaction_model = smf.ols(
+        "convexity_qmw ~ type + base_type + optimality * complexity * accuracy",
+        data=model,
+    )
+    interaction_model_result = interaction_model.fit()
+    print(interaction_model_result.summary())
+
+    print(anova_lm(big_model_result, interaction_model_result))
+    print(anova_lm(interaction_model_result))
+
+    interaction_mixed_model = smf.mixedlm(
+        "convexity_qmw ~ type + base_type + optimality * complexity * accuracy",
+        data=model,
+        groups=model["base_item_id"],
+    )
+    interaction_mixed_model_result = interaction_mixed_model.fit(reml=False)
+    print(interaction_mixed_model_result.summary())
+    lr_stat, p_value, df = likelihood_ratio_test(
+        interaction_mixed_model_result, interaction_model_result
+    )
+    print(f"Likelihood Ratio Test: χ²(1) = {lr_stat:.3f}, p = {p_value:.4g}")
+
+    medium_model = ols_from_model(
+        model,
+        dependent_var="convexity_qmw",
+        independent_vars=("optimality", "complexity", "accuracy"),
+        interactions=True,
+    )
+    print(anova_lm(medium_model, interaction_model_result))
+
+    medium_mixed_model = mixed_lm_from_model(
+        model,
+        dependent_var="convexity_qmw",
+        independent_vars=("optimality", "complexity", "accuracy"),
+        interactions=True,
+        groups_col="base_item_id",
+    )
+    lr_stat, p_value, df = likelihood_ratio_test(medium_mixed_model, medium_model)
+    print(f"Likelihood Ratio Test: χ²(1) = {lr_stat:.3f}, p = {p_value:.4g}")
+
+    print("\n\n AIC \t\t BIC \n")
+    print(f"Big OLS Model: \t {big_model_result.aic:.2f} \t {big_model_result.bic:.2f}")
+    print(f"Medium OLS Model: {medium_model.aic:.2f} \t {medium_model.bic:.2f}")
+    print(
+        f"Medium Mixed Model: {medium_mixed_model.aic:.2f} \t {medium_mixed_model.bic:.2f}"
+    )
+    print(
+        f"Interaction OLS Model: {interaction_model_result.aic:.2f} \t {interaction_model_result.bic:.2f}"
+    )
+    print(
+        f"Interaction Mixed Model: {interaction_mixed_model_result.aic:.2f} \t {interaction_mixed_model_result.bic:.2f}"
+    )
+
+    """
     # --- Define ranges for your predictors ---
     opt_range = np.linspace(model["optimality"].min(), model["optimality"].max(), 100)
     comp_levels = np.linspace(
@@ -156,7 +206,6 @@ if __name__ == "__main__":
 
     # --- Helper: predict convexity from fitted model ---
     def predict_convexity(opt, comp, acc):
-        """Use big_model_result.predict() for consistent term handling."""
         df = pd.DataFrame(
             {
                 "optimality": opt,
@@ -306,3 +355,4 @@ if __name__ == "__main__":
     ax.legend(loc="best", fontsize=8, ncol=2)
     plt.tight_layout()
     plt.show()
+    """
