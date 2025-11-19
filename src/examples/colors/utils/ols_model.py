@@ -1,13 +1,22 @@
+import sys
+from collections.abc import Iterable
+
 import statsmodels.formula.api as smf
 import pandas as pd
-import sys
 import numpy as np
 import matplotlib.pyplot as plt
 
 from scipy import stats
+from statsmodels.regression.linear_model import RegressionResults
+from statsmodels.regression.mixed_linear_model import MixedLMResults
 
 
-def ols_from_model(model: pd.DataFrame):
+def ols_from_model(
+    model: pd.DataFrame,
+    dependent_var: str = "convexity_qmw",
+    independent_vars: Iterable[str] = ("optimality", "complexity", "accuracy"),
+    interactions: bool = True,
+) -> RegressionResults:
     """
     Prints the output for the OLS model describing `convexity_qmw ~ optimality + complexity * accuracy` and `convexity_quw ~ optimality + complexity * accuracy`
     for a given input DataFrame
@@ -15,19 +24,65 @@ def ols_from_model(model: pd.DataFrame):
     Args:
         model (DataFrame): The input DataFrame, the format should be one that is loaded from one of the `.csv` model files
     """
-    model = model.rename(
-        columns={"convexity-qmw": "convexity_qmw", "convexity-quw": "convexity_quw"}
-    )
 
     results = smf.ols(
-        "convexity_qmw ~ optimality + complexity * accuracy", data=model
+        f"{dependent_var} ~ {(' * ' if interactions else ' + ').join(independent_vars)}",
+        data=model,
     ).fit()
     print(results.summary())
+    return results
 
+    """
     results = smf.ols(
         "convexity_quw ~ optimality + complexity * accuracy", data=model
     ).fit()
     print(results.summary())
+    """
+
+
+def mixed_lm_from_model(
+    model: pd.DataFrame,
+    dependent_var: str = "convexity_qmw",
+    independent_vars: Iterable[str] = ("optimality", "complexity", "accuracy"),
+    groups_col: str = "base_item_id",
+    interactions: bool = True,
+) -> MixedLMResults:
+    """
+    Prints the output for the mixed linear model describing `convexity_qmw ~ optimality + complexity * accuracy` with random intercepts for `base_item_id`
+    for a given input DataFrame
+
+    Args:
+        model (DataFrame): The input DataFrame, the format should be one that is loaded from one of the `.csv` model files
+    """
+
+    lm = smf.mixedlm(
+        f"{dependent_var} ~ {(' * ' if interactions else ' + ').join(independent_vars)}",
+        data=model,
+        groups=model[groups_col],  # random intercept
+    )
+
+    result = lm.fit(reml=False)
+    print(result.summary())
+    return result
+
+
+def likelihood_ratio_test(
+    mixed_model_result: MixedLMResults, ols_model_result: RegressionResults
+) -> tuple[float, float, int]:
+    """
+    Performs a likelihood ratio test between a mixed linear model and an OLS model
+
+    Args:
+        mixed_model_result (MixedLMResults): The fitted mixed linear model result
+        ols_model_result (RegressionResults): The fitted OLS model result
+
+    Returns:
+        tuple[float, float, int]: The likelihood ratio statistic, p-value, and degrees of freedom
+    """
+
+    lr_stat = 2 * (mixed_model_result.llf - ols_model_result.llf)
+    p_value = stats.chi2.sf(lr_stat, df=1)  # 1 df for one random variance parameter
+    return lr_stat, p_value, 1
 
 
 if __name__ == "__main__":
@@ -50,37 +105,31 @@ if __name__ == "__main__":
         columns={"convexity-qmw": "convexity_qmw", "convexity-quw": "convexity_quw"}
     )
 
-    lm = smf.mixedlm(
-        "convexity_qmw ~ optimality + type + base_type",
-        data=model,
-        groups=model["base_item_id"],  # random intercept for base_item_id
+    # first analysis: mixed vs. fixed effects for type + base_type
+
+    mixed_model_results = mixed_lm_from_model(
+        model,
+        dependent_var="convexity_qmw",
+        independent_vars=("type", "base_type"),
+        interactions=False,
     )
 
-    """
-	lm_reduced = smf.mixedlm(
-		"convexity_qmw ~ optimality + base_type",
-		data=model,
-		groups=model["base_item_id"],  # random intercept for base_item_id
-	)
-	"""
+    fixed_model_results = ols_from_model(
+        model,
+        dependent_var="convexity_qmw",
+        independent_vars=("type", "base_type"),
+        interactions=False,
+    )
 
-    result = lm.fit(reml=False)
-    print(result.summary())
-
-    fixed_model_results = smf.ols(
-        "convexity_qmw ~ optimality + type + base_type", data=model
-    ).fit()
-    print(fixed_model_results.summary())
-
-    # test statistic = 2 * (LL_mixed - LL_OLS)
-    lr_stat = 2 * (result.llf - fixed_model_results.llf)
-    p_value = stats.chi2.sf(lr_stat, df=1)  # 1 df for one random variance parameter
+    lr_stat, p_value, df = likelihood_ratio_test(
+        mixed_model_results, fixed_model_results
+    )
 
     print(f"Likelihood Ratio Test: χ²(1) = {lr_stat:.3f}, p = {p_value:.4g}")
 
-    print(f"Mixed model AIC: {result.aic:.2f}")
+    print(f"Mixed model AIC: {mixed_model_results.aic:.2f}")
     print(f"OLS model AIC:   {fixed_model_results.aic:.2f}")
-    print(f"Mixed model BIC: {result.bic:.2f}")
+    print(f"Mixed model BIC: {mixed_model_results.bic:.2f}")
     print(f"OLS model BIC:   {fixed_model_results.bic:.2f}")
 
     big_model = smf.ols(
@@ -210,7 +259,7 @@ if __name__ == "__main__":
     )
 
     # Predict using fixed effects only
-    plot_df["predicted_convexity"] = result.predict(exog=plot_df)
+    plot_df["predicted_convexity"] = fixed_model_results.predict(exog=plot_df)
 
     # Define colors for types
     type_colors = {"natural": "blue", "optimal": "green", "suboptimal": "red"}
@@ -257,6 +306,3 @@ if __name__ == "__main__":
     ax.legend(loc="best", fontsize=8, ncol=2)
     plt.tight_layout()
     plt.show()
-
-
-# ols_from_model(model)
