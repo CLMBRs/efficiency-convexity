@@ -2,7 +2,7 @@
 
 ## Paper and Appendix
 
-The paper and appendix can be found [here](./docs/)
+The paper and appendix can be found [here](./docs/).
 
 ## Setup
 After setting up the `eff_conv` environment, install the proper prerequisites:
@@ -37,7 +37,7 @@ This will create the files `color_reg.png`, `color_rot.png`, and `color_diff.png
 
 ### Minimizing Data
 
-The raw model files for each experiement are very large (ranging from 250 MB for artifical models to over 14 GB for the color model). In order to distribute the data and for ease of iteration, we provide minimized `.csv` files containing the relevant data in the GitHub repository. We also include the raw model files we generated [here](https://osf.io/x3dkz/).
+The raw model files for each experiement are very large (ranging from 250 MB for artifical models to over 14 GB for the color model). In order to distribute the data and for ease of iteration, we provide minimized `.csv` files containing the relevant data in the GitHub repository.
 
 If you wish to run this experiment with your own data, after doing the data generation for experiment 1 and 2 you will need to generate the `.csv` files using the following command:
 

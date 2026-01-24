@@ -12,5 +12,3 @@ unzip IB_color_naming_model.zip
 mv IB_color_naming_model/IB_color_naming.pkl model.pkl
 rm -r IB_color_naming_model
 rm IB_color_naming_model.zip
-
-# TODO: OSF Data
