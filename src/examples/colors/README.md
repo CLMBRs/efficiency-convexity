@@ -1,6 +1,8 @@
 ## Colors
 
-Based on the paper [TODO]
+## Paper and Appendix
+
+The paper and appendix can be found [here](./docs/)
 
 ## Setup
 After setting up the `eff_conv` environment, install the proper prerequisites:
@@ -66,8 +68,6 @@ python -m colors.exp1.generate_color_correlation
 python -m colors.utils.ols_model color_model
 ```
 
-TODO: ADD OTHER CORRELATION MODEL AND OTHER ANALYSIS
-
 ### Experiments 2 & 3
 
 #### Data Generation
@@ -87,7 +87,14 @@ python -m colors.exp2_3.generate_plots
 python -m colors.exp2_3.calculate_correlation
 ```
 
-TODO: ADD OTHER CORRELATION MODEL AND OTHER ANALYSIS
+### OLS Models
+
+Please ensure you have the minimized `.csv` files before running the OLS model.
+
+After the `.csv` files are generated, you can generate the the OLS model for a given environment with the following command
+```sh
+python -m colors.utils.ols_model [environment_name]
+```
 
 ## Additional Documentation
 - `exp1.check_diff`
@@ -109,7 +116,7 @@ TODO: ADD OTHER CORRELATION MODEL AND OTHER ANALYSIS
 - `exp2_3.generate_plots`
   - The script to generate the artificial model plots. The plots will be in `output/convexity/tile_qmw.png` and `output/convexity/tile_quw.png`
 - `utils.correlation`
-  - This contains a function to convert the correlation tables into a formatted LaTeX table
+  - This contains a function to convert the correlation tables into a formatted LaTeX table. Note that this table slightly differs from what is in the paper as it contains colums for p-values.
 - `utils.migrate`
   - This was a script to fix discrepencies between an old format of models and a more organized format
 - `utils.minimize_models`
@@ -120,8 +127,3 @@ TODO: ADD OTHER CORRELATION MODEL AND OTHER ANALYSIS
   - Takes in 1 - 3 arguemnts, the first being the name of the output file and the second (optional) being a rotation value, the final can argument is `diff` and toggles whether or not to show difference point cloud or the regular point cloud.
 - `visualization.gen_wcs_grid`
   - Generates a very simplistic WCS stimulus grid. To change the rotation a constant must be manually edited in the file.
-
-## Notes
-
-If you found this useful please cite the following paper:
-[TODO]
