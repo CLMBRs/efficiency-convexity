@@ -184,6 +184,6 @@ if __name__ == "__main__":
         pcd,
         extras=[xy_grid, xz_grid, yz_grid],
         lookat=min_bound + np.array([-20, 0, 10]),
-        up=np.ndarray([1, 0, 0]),
+        up=np.array([1, 0, 0]),
         camera_position=center + np.array([-135, -180, -220]),
     )

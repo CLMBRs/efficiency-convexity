@@ -5,9 +5,9 @@
 The paper and appendix can be found [here](./docs/).
 
 ## Setup
-After setting up the `eff_conv` environment, install the proper prerequisites:
+After setting up the general `uv` environment, install the proper prerequisites:
 ```sh
-python -m pip install -r requirements.txt
+uv sync --extra colors
 ```
 
 ## How To Run
@@ -23,13 +23,11 @@ populate the relevant files.
 
 ### Creating the WCS and CIELab visualizations
 
-TODO: The stimulus grid needs to be updated
-
 In the `examples` directory, run the following commands to get CIELab visualization (Figure 2 in the paper):
 ```sh
-python -m colors.visualization.cloud color_reg
-python -m colors.visualization.cloud color_rot 20
-python -m colors.visualization.cloud color_diff 20 diff
+uv run -m colors.visualization.cloud color_reg
+uv run -m colors.visualization.cloud color_rot 20
+uv run -m colors.visualization.cloud color_diff 20 diff
 ```
 
 This will create the files `color_reg.png`, `color_rot.png`, and `color_diff.png` in the `output/color` folder.
@@ -42,7 +40,7 @@ The raw model files for each experiement are very large (ranging from 250 MB for
 If you wish to run this experiment with your own data, after doing the data generation for experiment 1 and 2 you will need to generate the `.csv` files using the following command:
 
 ```sh
-python -m colors.utils.minimize_models
+uv run -m colors.utils.minimize_models
 ```
 
 ### Experiment 1
@@ -51,7 +49,7 @@ python -m colors.utils.minimize_models
 
 To generate the color model run the following command in the `examples` directory:
 ```sh
-python -m colors.exp1.generate_color_model
+uv run -m colors.exp1.generate_color_model
 ```
 
 #### Data Analysis
@@ -61,11 +59,11 @@ Please ensure you have the minimized `.csv` files before doing analysis.
 You can generate the plots and correlations using the respective commands:
 ```sh
 # Plots
-python -m colors.exp1.generate_color_plot
-python -m colors.exp1.gen_whisker_plots
+uv run -m colors.exp1.generate_color_plot
+uv run -m colors.exp1.gen_whisker_plots
 # Correlations
-python -m colors.exp1.generate_color_correlation
-python -m colors.utils.ols_model color_model
+uv run -m colors.exp1.generate_color_correlation
+uv run -m colors.utils.ols_model color_model
 ```
 
 ### Experiments 2 & 3
@@ -74,7 +72,7 @@ python -m colors.utils.ols_model color_model
 
 To generate the test models for experiments 2 and 3, you can run the followign command in the `examples` directory:
 ```sh
-python -m colors.exp2_3.generate_models
+uv run -m colors.exp2_3.generate_models
 ```
 
 ### Data Analysis
@@ -83,8 +81,8 @@ Please ensure you have the minimized `.csv` files before doing analysis.
 
 After this you can generate the plots and correlations using the respective commands:
 ```sh
-python -m colors.exp2_3.generate_plots
-python -m colors.exp2_3.calculate_correlation
+uv run -m colors.exp2_3.generate_plots
+uv run -m colors.exp2_3.calculate_correlation
 ```
 
 ### OLS Models
@@ -93,7 +91,7 @@ Please ensure you have the minimized `.csv` files before running the OLS model.
 
 After the `.csv` files are generated, you can generate the the OLS model for a given environment with the following command
 ```sh
-python -m colors.utils.ols_model [environment_name]
+uv run -m colors.utils.ols_model [environment_name]
 ```
 
 ## Additional Documentation

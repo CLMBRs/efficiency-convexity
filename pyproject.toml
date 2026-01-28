@@ -21,13 +21,6 @@ license = {file = "LICENSE.txt"}
 dependencies = [
     "scipy",
     "numpy",
-    "pytest",
-    "black",
-    "statsmodels==0.14.5",
-    "pandas==2.3.0",
-    "open3d==0.19.0",
-    "matplotlib==3.10.3",
-    "scikit-image==0.25.2",
 ]
 
 [project.urls]
@@ -36,6 +29,24 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+    "black",
     "ruff>=0.14.0",
     "ty>=0.0.1a21",
+    "pytest",
 ]
+
+[project.optional-dependencies]
+colors = [
+    "statsmodels==0.14.5",
+    "pandas==2.3.0",
+    "open3d==0.19.0",
+    "matplotlib==3.10.3",
+    "scikit-image==0.25.2",
+]
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["eff_conv*"]
