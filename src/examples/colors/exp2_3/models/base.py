@@ -49,7 +49,7 @@ class NPUM(ModelSystem):
 
     def space(self) -> SimilaritySpace:
         return SimilaritySpace(
-            np.array([[i] for i in range(self.size)]), self.meaning_priors()
+            np.array([[i] for i in range(11)]), self.meaning_priors()
         )
 
     def name(self) -> str:
