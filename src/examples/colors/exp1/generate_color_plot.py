@@ -47,7 +47,7 @@ def gen_graph():
 
     # Label axes and show plot
     fig.suptitle(
-        f"Accuracy vs Complexity Graphs with Quasi-Convexity\nof $q(m|w)$and $q(u|w)$ for Color Naming Encoders",
+        f"Accuracy vs Complexity Graphs with Quasi-Convexity\nof $q(m|w)$ and $q(u|w)$ for Color Naming Encoders",
         fontsize=50,
     )
     plt.grid(False)

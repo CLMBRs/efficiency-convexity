@@ -1,5 +1,9 @@
 # Efficiency & Convexity
 
+## Notes
+
+This repository accompanies the paper "When Efficient Communication Explains Convexity." For code and data related to that paper, please navigate to `src/examples/colors`.
+
 ## Installing Efficiency & Convexity
 
 1. Download or clone this repository and navigate to the root folder.
