@@ -18,6 +18,8 @@ Please install the `model.pkl` following the direction from [here](https://githu
 
 Please additionally install the `WCS-Data-20110316.zip` file from the World Color Survey data from [here](https://linguistics.berkeley.edu/wcs/data.html). Make sure the unzipped folder is in `data`. Make sure to also install the mappings (`cnum-vhcm-lab-new.txt`) and place them in the `data` folder as well.
 
+We provide minimized `.csv` files of the data for each IB environment. The raw `.pkl` files can be downloaded from [here](https://osf.io/x3dkz).
+
 **Alternatively**: all of the above steps are combined in the file `data/download.sh`, which you can run from inside the `data` subdirectory to
 populate the relevant files.
 
