@@ -20,7 +20,9 @@ def find_frontier_optimality(frontier: np.ndarray, point: np.ndarray) -> float:
     return -np.min(np.linalg.norm(frontier - point, axis=1))
 
 
-def find_epsilon_measure(frontier: np.ndarray, point: np.ndarray, betas: np.ndarray) -> float:
+def find_epsilon_measure(
+    frontier: np.ndarray, point: np.ndarray, betas: np.ndarray
+) -> float:
     """
     Finds the negative epsilon measure for a given language (this is the negative difference from the nearest optimal language over
     the reciporical of the beta value for that optimal language.)
@@ -34,10 +36,10 @@ def find_epsilon_measure(frontier: np.ndarray, point: np.ndarray, betas: np.ndar
         float: the negative epsilon measure for the language.
     """
     optimal_values = frontier[:, 0] - frontier[:, 1] * betas
-    point_values = point[0] - point[1]*betas
-    dists = (point_values - optimal_values)
+    point_values = point[0] - point[1] * betas
+    dists = point_values - optimal_values
     nearest = np.argmin(dists)
-    return -dists[nearest]/(betas[nearest] + IB_EPSILON)
+    return -dists[nearest] / (betas[nearest] + IB_EPSILON)
 
 
 def minimize_model(name: str):
