@@ -3,6 +3,8 @@ import numpy as np
 import pickle
 import os
 
+from eff_conv.ib.utils import IB_EPSILON
+
 
 def find_frontier_optimality(frontier: np.ndarray, point: np.ndarray) -> float:
     """
@@ -16,6 +18,28 @@ def find_frontier_optimality(frontier: np.ndarray, point: np.ndarray) -> float:
         float: the negative distance from the input point to the closest point in frontier.
     """
     return -np.min(np.linalg.norm(frontier - point, axis=1))
+
+
+def find_epsilon_measure(
+    frontier: np.ndarray, point: np.ndarray, betas: np.ndarray
+) -> float:
+    """
+    Finds the negative epsilon measure for a given language (this is the negative difference from the nearest optimal language over
+    the reciporical of the beta value for that optimal language.)
+
+    Args:
+        frontier (np.ndarray): A list of 2-dimensional points. This is the points which the input point is checked against.
+        point (np.ndarray): A 2-dimensional point. This is the point which is being checked.
+        betas (np.ndarray): A list of beta values for each language in the frontier.
+
+    Returns:
+        float: the negative epsilon measure for the language.
+    """
+    optimal_values = frontier[:, 0] - frontier[:, 1] * betas
+    point_values = point[0] - point[1] * betas
+    dists = point_values - optimal_values
+    nearest = np.argmin(dists)
+    return -dists[nearest] / (betas[nearest] + IB_EPSILON)
 
 
 def minimize_model(name: str):
@@ -66,6 +90,9 @@ def minimize_model(name: str):
         frontier.append([lang.complexity, lang.iwu])
 
     frontier = np.array(frontier)
+    with open(f"./colors/data/model.pkl", "rb") as f:
+        optimal_model = pickle.load(f)
+    betas = np.array(optimal_model["betas"][::-1])
 
     if not artificial:
         offset = len(model["optimal"])
@@ -76,7 +103,7 @@ def minimize_model(name: str):
             df_data["convexity-quw"].append(model["convexity"]["quw"]["natural"][i])
             df_data["type"].append("natural")
             df_data["optimality"].append(
-                find_frontier_optimality(frontier, np.array([n.complexity, n.iwu]))
+                find_epsilon_measure(frontier, np.array([n.complexity, n.iwu]), betas)
             )
             df_data["base_item_id"].append(i + offset)
 
@@ -94,7 +121,7 @@ def minimize_model(name: str):
         df_data["convexity-quw"].append(model["convexity"]["quw"]["suboptimal"][i])
         df_data["type"].append("suboptimal")
         df_data["optimality"].append(
-            find_frontier_optimality(frontier, np.array([s.complexity, s.iwu]))
+            find_epsilon_measure(frontier, np.array([s.complexity, s.iwu]), betas)
         )
         df_data["base_item_id"].append(i // 10)
 

@@ -72,7 +72,7 @@ uv run -m colors.utils.ols_model color_model
 
 #### Data Generation
 
-To generate the test models for experiments 2 and 3, you can run the followign command in the `examples` directory:
+To generate the test models for experiments 2 and 3, you can run the following command in the `examples` directory:
 ```sh
 uv run -m colors.exp2_3.generate_models
 ```
