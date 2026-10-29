@@ -40,24 +40,22 @@ class TestIB:
         with pytest.raises(ValueError):
             struct_with_negative = IBStructure(np.array([[1, -1, 1]]))
         with pytest.raises(ValueError):
-            struct_wrong_prior = IBStructure(
-                np.array([[0.25, 0.25, 0.25, 0.25]]), np.array([])
-            )
+            struct_wrong_prior = IBStructure(np.full((4, 4), 0.25), np.array([]))
         with pytest.raises(ValueError):
             struct_zero_prior = IBStructure(
-                np.array([[0.25, 0.25, 0.25, 0.25]]), np.array([0, 0, 1, 0])
+                np.full((4, 4), 0.25), np.array([0, 0, 1, 0])
             )
         with pytest.raises(ValueError):
             struct_negative_prior = IBStructure(
-                np.array([[0.25, 0.25, 0.25, 0.25]]), np.array([0.25, 0.25, -0.5, 1])
+                np.full((4, 4), 0.25), np.array([0.25, 0.25, -0.5, 1])
             )
         with pytest.raises(ValueError):
             struct_invalid_prior = IBStructure(
-                np.array([[0.25, 0.25, 0.25, 0.25]]), np.array([1, 2, 3, 4])
+                np.full((4, 4), 0.25), np.array([1, 2, 3, 4])
             )
         with pytest.raises(ValueError):
             struct_small_prior = IBStructure(
-                np.array([[0.25, 0.25, 0.25, 0.25]]), np.array([0.1, 0.1, 0.1, 0.1])
+                np.full((4, 4), 0.25), np.array([0.1, 0.1, 0.1, 0.1])
             )
 
     # Tests for utils.py
@@ -67,6 +65,12 @@ class TestIB:
 
     def test_random_expressions(self):
         assert generate_random_expressions(10).shape == (10, 10)
+        # seeding is reproducible and leaves numpy's global seeding function intact
+        assert np.array_equal(
+            generate_random_expressions(5, seed=0),
+            generate_random_expressions(5, seed=0),
+        )
+        assert callable(np.random.seed)
         assert (
             np.abs(np.sum(generate_random_expressions(10), axis=0) - 1) < IB_EPSILON
         ).all()
@@ -77,6 +81,10 @@ class TestIB:
         with pytest.raises(ValueError):
             invalid_arr2 = kl_divergence(np.array([1]), np.array([0]))
         assert kl_divergence(np.array([1]), np.array([1])) == 0
+        # mass where the second distribution has none gives infinite divergence
+        assert kl_divergence(np.array([0.5, 0.5]), np.array([1, 0])) == np.inf
+        # but zeros in the first distribution are fine (0 log 0 = 0)
+        assert kl_divergence(np.array([1, 0]), np.array([0.5, 0.5])) == 1
         expected = 0.75 * log2(3 / 2) - 0.25
         assert (
             abs(kl_divergence(np.array([0.25, 0.75]), np.array([0.5, 0.5])) - expected)

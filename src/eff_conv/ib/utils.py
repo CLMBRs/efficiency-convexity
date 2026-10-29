@@ -38,10 +38,15 @@ def kl_divergence(arr1: np.ndarray, arr2: np.ndarray) -> float:
         arr1 (np.ndarray): One of the input matricies (must sum to 1)
         arr2 (np.ndarray): One of the input matricies (must sum to 1)
     Returns:
-        float: The Kullback-Leibler divergence (in bits)
+        float: The Kullback-Leibler divergence (in bits). This is `np.inf` if arr1 is not
+        absolutely continuous with respect to arr2 (i.e. arr1 > 0 somewhere arr2 is 0).
     """
     if abs(np.sum(arr1) - 1) > IB_EPSILON or abs(np.sum(arr2) - 1) > IB_EPSILON:
         raise ValueError("Arrays are not probability distributions")
+    # If arr1 puts mass where arr2 has none, the divergence is infinite.
+    # (safe_log would otherwise map log(x / 0) = inf to 0.)
+    if np.any((arr1 > 0) & (arr2 <= 0)):
+        return np.inf
     return np.sum(arr1 * safe_log(arr1 / arr2))
 
 
@@ -73,9 +78,10 @@ def generate_random_expressions(meanings: int, seed: int = None) -> np.ndarray:
     Returns:
         np.ndarray: Random qwm matrix for a language
     """
-    if seed is not None:
-        np.random.seed = seed
-    values = np.random.dirichlet(np.ones(meanings), size=meanings).T
+    # Use a local generator when seeded, so seeding is reproducible and does not
+    # touch numpy's global random state; otherwise fall back to the global state.
+    rng = np.random.default_rng(seed) if seed is not None else np.random
+    values = rng.dirichlet(np.ones(meanings), size=meanings).T
     # Normalize because there is a chance the different is larger than IB_EPSILON
     return values.T / np.sum(values.T, axis=0)
 
