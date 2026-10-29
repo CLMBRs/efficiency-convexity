@@ -66,8 +66,8 @@ def calculate_optimal(
     structure: IBStructure,
     beta: float,
     start: IBLanguage = None,
-    tol_objective: float = 1e-6,
-    tol_encoder: float = 1e-5,
+    tol_objective: float | None = 1e-6,
+    tol_encoder: float | None = 1e-5,
     max_iter: int = 10000,
 ) -> IBLanguage:
     """Find the optimal language for a given beta given a structure
@@ -75,7 +75,8 @@ def calculate_optimal(
     This is because recalculate_language will break under these conditions (see notes for it).
     NOTE: This is not guaranteed to find the exact optimal language, as it can get stuck near the optimal frontier. It may be based to use run_deterministic_annealing
 
-    Iteration stops when both of the following hold:
+    Iteration stops when all of the enabled criteria hold (set a tolerance to None to disable
+    that criterion; using both is most accurate, using only tol_objective is fastest):
     - the estimated remaining decrease of the objective is at most tol_objective. The BA step
       never increases the objective, and it converges roughly geometrically, so if the last two
       decreases were d_prev and d, the remaining decrease is about d * r / (1 - r) with
@@ -88,13 +89,16 @@ def calculate_optimal(
         structure (IBStructure): The structure for which the language will be optimized
         beta (float): Beta to calculate the optimal at
         start (IBLanguage, optional): A starting point for the optimizer. If not passed in a random language will be generated and used
-        tol_objective (float, default 1e-6): Tolerance on the estimated remaining decrease of the objective
-        tol_encoder (float, default 1e-5): Tolerance on the change of q(w|m) in one iteration
+        tol_objective (float | None, default 1e-6): Tolerance on the estimated remaining decrease of the objective, or None to disable
+        tol_encoder (float | None, default 1e-5): Tolerance on the change of q(w|m) in one iteration, or None to disable
         max_iter (int, default 10000): Maximum number of BA iterations
 
     Returns:
         IBLanguage: An updated language which is closer to the optimal language.
     """
+    if tol_objective is None and tol_encoder is None:
+        raise ValueError("At least one of tol_objective and tol_encoder must be set")
+
     language = (
         start
         if start is not None
@@ -117,15 +121,16 @@ def calculate_optimal(
         else:
             rate = decrease / prev_decrease
             remaining = decrease * rate / (1 - rate)
+        objective_settled = tol_objective is None or remaining <= tol_objective
 
         # Words may be dropped by recalculate_language, in which case the encoder has changed
-        encoder_settled = (
+        encoder_settled = tol_encoder is None or (
             new_language.qwm.shape == language.qwm.shape
             and np.abs(new_language.qwm - language.qwm).max() <= tol_encoder
         )
 
         language, objective, prev_decrease = new_language, new_objective, decrease
-        if remaining <= tol_objective and encoder_settled:
+        if objective_settled and encoder_settled:
             return language
 
     warnings.warn(
@@ -168,8 +173,8 @@ def run_deterministic_annealing(
     betas: tuple[float, ...],
     verbose: bool = False,
     seed: IBLanguage = None,
-    tol_objective: float = 1e-6,
-    tol_encoder: float = 1e-5,
+    tol_objective: float | None = 1e-6,
+    tol_encoder: float | None = 1e-5,
     max_iter: int = 10000,
 ) -> tuple[tuple[IBLanguage, float], ...]:
     """Run forward or reverse deterministic annealing approach. This means that it will start either with a very high value of beta and work down (reverse)
@@ -186,7 +191,7 @@ def run_deterministic_annealing(
         betas (float): The betas to optimize for, this will be iterated through in order
         verbose (bool): Output to console when languages converge
         start (IBLanguage, optional): A starting point for the annealing run. If not passed in a random language will be generated and used
-        tol_objective, tol_encoder, max_iter: Stopping criteria passed to calculate_optimal at every beta
+        tol_objective, tol_encoder, max_iter: Stopping criteria passed to calculate_optimal at every beta (None disables a criterion)
 
     Returns:
         tuple[tuple[IBLanguage, float], ...]: Languages and their respective beta values.
