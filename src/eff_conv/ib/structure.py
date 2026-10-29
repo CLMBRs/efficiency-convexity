@@ -43,7 +43,7 @@ class IBStructure:
                 raise ValueError(
                     f"Input matrix is for {pum.shape[1]} meanings, but {len(prior)} priors are given"
                 )
-            if (pum <= 0).any():
+            if (prior <= 0).any():
                 raise ValueError("Priors must all be greater than 0")
             if abs(np.sum(prior) - 1) > IB_EPSILON:
                 raise ValueError("Priors must sum to 1")
