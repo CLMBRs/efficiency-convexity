@@ -51,7 +51,9 @@ class TestOptimization:
 
     def test_calculate_optimal_fixed_point(self):
         # The fully uninformative language is a fixed point: stop right away, unchanged
-        language = calculate_optimal(self.simple_struct, 1, self.simple_lang, max_iter=1)
+        language = calculate_optimal(
+            self.simple_struct, 1, self.simple_lang, max_iter=1
+        )
         assert np.array_equal(language.qwm, self.simple_lang.qwm)
 
     def test_calculate_optimal_warns_without_convergence(self):
@@ -62,5 +64,9 @@ class TestOptimization:
     def test_calculate_optimal_needs_a_criterion(self):
         with pytest.raises(ValueError):
             calculate_optimal(
-                self.simple_struct, 1, self.simple_lang, tol_objective=None, tol_encoder=None
+                self.simple_struct,
+                1,
+                self.simple_lang,
+                tol_objective=None,
+                tol_encoder=None,
             )
